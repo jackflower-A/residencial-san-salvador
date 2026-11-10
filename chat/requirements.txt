@@ -5,3 +5,5 @@ python-telegram-bot
 python-dotenv
 firebase 
 google-genai
+gunicorn
+simple-websocket
