@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soporte - residencial</title>
+    
+    <!-- Estilos de la interfaz temática Delivery -->
+    <style>
+        :root {
+            --primary-color: #0456a9; /* Naranja estilo delivery (ej. PedidosYa / Rappi) */
+            --primary-hover: #30ffe7;
+            --bg-color: #f4f7f6;
+            --chat-bg: #ece5dd; /* Fondo clásico de chat */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* Contenedor principal simulando un teléfono */
+        .chat-container {
+            width: 100%;
+            max-width: 400px;
+            height: 85vh;
+            background-color: #fff;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Cabecera del Chat */
+        .chat-header {
+            background-color: var(--primary-color);
+            color: #fff;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
+
+        .header-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .user-section {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            font-size: 0.75rem;
+        }
+
+        .user-section #usuario {
+            margin-bottom: 5px;
+            opacity: 0.9;
+        }
+
+        .btn-logout {
+            background-color: white;
+            color: var(--primary-color);
+            border: none;
+            padding: 5px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-logout:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Área de mensajes */
+        #mensajes {
+            flex: 1;
+            background-color: var(--chat-bg);
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            /* Patrón de fondo opcional sutil */
+            background-image: radial-gradient(#d5cece 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        /* Estilo de la burbuja de chat */
+        .mensaje-burbuja {
+            background-color: #fff;
+            color: #333;
+            padding: 10px 15px;
+            border-radius: 15px;
+            border-bottom-left-radius: 2px; /* Estilo de cola de globo */
+            max-width: 85%;
+            word-wrap: break-word;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            font-size: 0.95rem;
+            align-self: flex-start;
+        }
+
+        /* Footer (Input y botón de enviar) */
+        .chat-footer {
+            padding: 15px;
+            background-color: #fff;
+            border-top: 1px solid #ddd;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .chat-footer input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            outline: none;
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+        }
+
+        .chat-footer input:focus {
+            border-color: var(--primary-color);
+        }
+
+        .chat-footer button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+            transition: 0.2s;
+        }
+
+        .chat-footer button:hover {
+            background-color: var(--primary-hover);
+        }
+        /* CONTENEDOR DEL CHAT */
+    #mensajes {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        overflow-y: auto;
+    }
+
+/* ESTILO GENERAL DE BURBUJAS */
+    .mensaje-burbuja {
+        padding: 12px 15px;
+        border-radius: 16px;
+        max-width: 80%;
+        width: fit-content;
+        overflow-wrap: anywhere;
+        white-space: pre-wrap;
+    }
+
+/* MENSAJES DEL USUARIO */
+    .mensaje-usuario {
+        align-self: flex-end;
+        background-color: #0957a6;
+        color: white;
+        border-bottom-right-radius: 4px;
+    }
+
+/* MENSAJES DE GEMINI */
+    .mensaje-gemini {
+        align-self: flex-start;
+        background-color: #d9fdd3;
+        color: #222;
+        border-bottom-left-radius: 4px;
+    }
+    </style>
+</head>
+
+<body>
+
+    <div class="chat-container">
+        <!-- Encabezado de la app de Delivery -->
+        <header class="chat-header">
+            <div class="header-title">
+                🙋‍♂️ <span>Soporte Residencial</span>
+            </div>
+            <div class="user-section">
+                <span id="usuario">Cargando...</span>
+                <button class="btn-logout" onclick="cerrarSesion()">Cerrar Sesión</button>
+            </div>
+        </header>
+
+        <!-- Área donde aparecerán los mensajes -->
+        <main id="mensajes"></main>
+
+        <!-- Controles para enviar mensajes -->
+        <footer class="chat-footer">
+            <input 
+                type="text" 
+                id="mensaje" 
+                placeholder="Escribe un mensaje..."
+                autocomplete="off"
+            >
+            <button onclick="enviar()" title="Enviar">
+                ➤
+            </button>
+        </footer>
+    </div>
+
+    <!-- Librería Socket.IO -->
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    
+    <!-- Configuración Firebase -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+        import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey:"{{apiKey}}" ,
+            authDomain:"{{authDomain}}" ,
+            projectId:"{{projectId}}",
+            storageBucket:"{{storageBucket}}",
+            messagingSenderId:"{{messagingSenderId}}",
+            appId:"{{appId}}" ,
+            measurementId:"{{measurementId}}"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        
+        // Comprobar la autentificación 
+        onAuthStateChanged(auth, function(usuario){
+            if(usuario){
+                // Solo muestra el inicio del correo para no romper el diseño si es muy largo
+                let emailCorto = usuario.email.split('@')[0];
+                document.getElementById("usuario").innerText = "👤 " + emailCorto;
+                console.log("Usuario Autentificado: ", usuario.email);
+            } else{
+                window.location.href="/";
+            }
+        });
+        
+        // Cerrar Session
+        window.cerrarSesion = async function(){
+            await signOut(auth);
+            window.location.href="/"
+        }
+    </script>
+
+    <!-- Lógica de Socket.io -->
+    <script>
+        // Paso 1. Conectarse al servidor Socket.IO
+        const socket = io();
+
+        
+    // RECIBIR RESPUESTAS DE GEMINI
+    
+    socket.on("respuesta_gemini", function(datos) {
+
+        const contenedor = document.getElementById("mensajes");
+
+        const burbuja = document.createElement("div");
+
+        burbuja.classList.add("mensaje-burbuja", "mensaje-gemini");
+
+        burbuja.innerText = datos.texto;
+
+        contenedor.appendChild(burbuja);
+
+        contenedor.scrollTop = contenedor.scrollHeight;
+
+    });
+
+
+
+        // Paso 2. Escuchar los mensajes enviados por el servidor
+        socket.on("mensaje", function(mensaje) {
+
+        const contenedor = document.getElementById("mensajes");
+
+        const burbuja = document.createElement("div");
+
+        burbuja.classList.add("mensaje-burbuja", "mensaje-usuario");
+
+        burbuja.innerText = mensaje;
+
+        contenedor.appendChild(burbuja);
+
+        contenedor.scrollTop = contenedor.scrollHeight;
+
+        });
+
+        // Paso 3. Función para enviar mensajes
+        function enviar() {
+            // Obtener el texto
+            let inputMensaje = document.getElementById("mensaje");
+            let mensaje = inputMensaje.value;
+
+            // Verificar que no esté vacío
+            if (mensaje.trim() !== "") {
+                // Enviar mensaje al servidor
+                socket.send(mensaje);
+                // Limpiar el campo
+                inputMensaje.value = "";
+                inputMensaje.focus();
+            }
+        }
+
+        // Paso 4. Permitir enviar presionando ENTER
+        document.getElementById("mensaje").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                enviar();
+            }
+        });
+    </script>
+</body>
+</html>

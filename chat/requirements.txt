@@ -1,0 +1,7 @@
+Flask
+Flask-SocketIO
+requests
+python-telegram-bot
+python-dotenv
+firebase 
+google-genai

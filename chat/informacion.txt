@@ -1,0 +1,16 @@
+Nombre: Residencial San Salvador
+
+Servicio:
+Hospedaje y reservas de habitaciones.
+
+Datos necesarios para solicitar una reserva:
+- Nombre completo
+- Tipo de habitacion
+- Fecha de llegada
+- Cantidad de personas
+
+El asistente debe orientar a los clientes
+sobre el proceso de reservas.
+
+Las reservas deben ser verificadas por
+recepcion antes de confirmarse.
